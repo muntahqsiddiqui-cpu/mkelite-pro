@@ -1,281 +1,268 @@
-<!DOCTYPE html>
+                       <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MK ELITE | PREMIUM SHOP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MK ELITE | Pro Edition</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
     <style>
-        :root { 
-            --primary: #00ffd5; 
-            --bg: #0b0b0f; 
-            --card: #1a1a24; 
-            --accent: #ff007a; 
-            --glass: rgba(255, 255, 255, 0.05); 
-            --text-muted: #888;
+        :root {
+            --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; 
+            --sub: #64748b; --accent: #eef2ff; --border: rgba(0,0,0,0.06);
+            --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { background: var(--bg); color: #fff; padding-bottom: 120px; overflow-x: hidden; }
+        body.dark-mode {
+            --bg: #020617; --card: #0f172a; --text: #f8fafc; --sub: #94a3b8;
+            --accent: #1e293b; --border: rgba(255,255,255,0.08);
+            --nav-bg: rgba(15, 23, 42, 0.8);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+
+        /* --- Auth Modal --- */
+        #authModal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(15px); z-index: 3000; 
+            display: flex; align-items: center; justify-content: center; padding: 25px; 
+        }
+        .login-box { 
+            background: var(--card); padding: 40px 25px; border-radius: 40px; 
+            width: 100%; max-width: 400px; text-align: center; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .btn-google { 
+            width: 100%; padding: 18px; background: white; border: 1px solid #ddd; 
+            border-radius: 20px; font-weight: 700; display: flex; 
+            align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: #000; 
+            margin-bottom: 15px; 
+        }
+        .btn-guest { 
+            width: 100%; padding: 15px; background: var(--accent); color: var(--primary); 
+            border: none; border-radius: 18px; font-weight: 700; cursor: pointer; 
+        }
+
+        /* --- Header --- */
         header { 
-            padding: 20px 6%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(11, 11, 15, 0.8); 
-            backdrop-filter: blur(20px); 
-            position: sticky; top: 0; z-index: 1000;
-            border-bottom: 1px solid var(--glass);
+            padding: 15px 20px; background: var(--nav-bg); backdrop-filter: blur(10px); 
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-weight: 800; font-size: 22px; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Search Bar */
-        .search-container { padding: 15px 6%; }
-        .search-bar {
-            width: 100%; padding: 15px 20px; border-radius: 15px;
-            background: var(--card); border: 1px solid var(--glass);
-            color: white; outline: none; transition: 0.3s;
-        }
-        .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,255,213,0.1); }
-
-        .scroller { display: flex; gap: 12px; padding: 10px 6%; overflow-x: auto; scrollbar-width: none; }
-        .pills { 
-            background: var(--card); border: 1px solid var(--glass); padding: 10px 22px; 
-            border-radius: 12px; color: #fff; cursor: pointer; white-space: nowrap; 
-            transition: 0.3s; font-size: 13px;
-        }
-        .pills.active { background: var(--primary); color: #000; font-weight: 700; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 6%; }
-        
-        /* Premium Card Design */
+        /* --- Grid & Cards --- */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .card { 
-            background: var(--card); border-radius: 20px; overflow: hidden; 
-            border: 1px solid var(--glass); position: relative;
-            transition: transform 0.3s;
+            background: var(--card); border-radius: 28px; overflow: hidden; 
+            border: 1px solid var(--border); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
         }
-        .card:active { transform: scale(0.95); }
-        
-        .img-box { width: 100%; height: 160px; position: relative; background: #222; }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .badge {
-            position: absolute; top: 10px; left: 10px; background: var(--accent);
-            padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800;
-        }
-
-        .card-info { padding: 15px; }
-        .card-info h3 { font-size: 14px; margin-bottom: 5px; color: #fff; height: 35px; overflow: hidden; }
-        .price { color: var(--primary); font-weight: 800; font-size: 16px; margin-bottom: 12px; }
-        
-        .btn-buy { 
-            width: 100%; padding: 12px; border-radius: 12px; border: none; 
-            background: #fff; color: #000; font-weight: 800; font-size: 11px; cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-buy:hover { background: var(--primary); }
-
-        /* Floating Cart Button */
-        .cart-count {
-            position: absolute; top: -5px; right: -5px; background: var(--accent);
-            width: 18px; height: 18px; border-radius: 50%; font-size: 10px;
-            display: flex; align-items: center; justify-content: center; font-weight: 800;
+        .card img { width: 100%; height: 160px; object-fit: cover; }
+        .card-body { padding: 15px; }
+        .price { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .title { font-size: 13px; color: var(--sub); font-weight: 600; margin: 5px 0 12px; height: 35px; overflow: hidden; }
+        .wa-btn { 
+            background: #22c55e; color: white; text-decoration: none; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; 
+            padding: 12px; border-radius: 15px; font-size: 12px; font-weight: 700; 
         }
 
-        .panel {
-            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: var(--bg); z-index: 2000; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
-            padding: 40px 8%; overflow-y: auto;
+        /* --- Navigation --- */
+        nav { 
+            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); 
+            backdrop-filter: blur(10px); display: flex; height: 80px; 
+            border-top: 1px solid var(--border); z-index: 1000; 
         }
-        .panel.active { right: 0; }
-        
-        .input-field { 
-            width: 100%; padding: 18px; background: #222; border: 1px solid var(--glass);
-            border-radius: 18px; color: white; margin-bottom: 15px; outline: none;
-        }
-
-        .navbar { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; height: 70px; background: rgba(26, 26, 36, 0.9);
-            backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-        .nav-link { color: #666; text-decoration: none; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); gap: 5px; }
         .nav-link.active { color: var(--primary); }
 
-        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Form Styling */
+        .form-input { 
+            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; 
+            border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;
+        }
     </style>
 </head>
-<body>
+<body class="dark-mode">
+
+    <div id="authModal">
+        <div class="login-box">
+            <h1 style="font-weight: 800; font-size: 32px; margin-bottom: 10px;">MK <span style="color:var(--primary)">ELITE</span></h1>
+            <p style="color: var(--sub); margin-bottom: 30px;">Premium Marketplace for Legends</p>
+            
+            <button onclick="loginWithGoogle()" class="btn-google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22"> Sign in with Google
+            </button>
+            
+            <button onclick="continueAsGuest()" class="btn-guest">
+                Continue as Guest
+            </button>
+        </div>
+    </div>
 
     <header>
-        <div class="logo">MK <span>ELITE</span></div>
-        <div style="position: relative; cursor: pointer;" onclick="openCart()">
-            <span style="font-size: 24px;">🛍️</span>
-            <div class="cart-count" id="cart-dot">0</div>
+        <div style="font-size: 22px; font-weight: 800;">MK <span style="color:var(--primary)">ELITE</span></div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="document.body.classList.toggle('dark-mode')" style="background:var(--accent); border:none; padding:8px 12px; border-radius:10px; color:var(--text); cursor:pointer;">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <div id="userHeader" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <img id="headPic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%;">
+            </div>
         </div>
     </header>
 
-    <div class="search-container">
-        <input type="text" class="search-bar" placeholder="Search premium items..." onkeyup="searchItems(this.value)">
-    </div>
-
-    <div class="scroller">
-        <div class="pills active" onclick="filterItems('all', this)">All Items</div>
-        <div class="pills" onclick="filterItems('shirt', this)">Premium Shirts</div>
-        <div class="pills" onclick="filterItems('watch', this)">Luxury Watches</div>
-    </div>
-
-    <div class="grid" id="main-grid"></div>
-
-    <div class="panel" id="user-panel">
-        <h1 style="margin-bottom: 10px;">Your Profile 👤</h1>
-        <p style="color: var(--text-muted); margin-bottom: 30px;">Address for faster checkout.</p>
-        <input type="text" id="u-name" class="input-field" placeholder="Full Name">
-        <textarea id="u-address" class="input-field" rows="4" placeholder="Full Address"></textarea>
-        <input type="number" id="u-phone" class="input-field" placeholder="WhatsApp Number">
-        <button class="btn-buy" style="padding: 20px; font-size: 16px;" onclick="saveUser()">SAVE PROFILE</button>
-        <p onclick="closePanel('user-panel')" style="text-align: center; margin-top: 25px; color: var(--text-muted); cursor: pointer;">← Close</p>
-    </div>
-
-    <div class="panel" id="cart-panel">
-        <h1 style="margin-bottom: 20px;">Your Bag 🛍️</h1>
-        <div id="cart-items-list"></div>
-        <hr style="border: 0; border-top: 1px solid var(--glass); margin: 20px 0;">
-        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; margin-bottom: 20px;">
-            <span>Total:</span>
-            <span id="cart-total">Rs. 0</span>
+    <div id="homePage" class="page active">
+        <div class="container">
+            <div style="margin-bottom: 20px; position: relative;">
+                <input type="text" id="searchInput" placeholder="Search luxury..." onkeyup="search()" style="width:100%; padding:15px 15px 15px 45px; border-radius:20px; border:none; background:var(--card); color:var(--text); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:18px; top:18px; color:var(--sub);"></i>
+            </div>
+            <div class="grid" id="adGrid">
+                <div class="card ad-item">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500">
+                    <div class="card-body">
+                        <div class="price">Rs. 8,500</div>
+                        <div class="title">Elite Silver Watch</div>
+                        <a href="https://wa.me/923000000000" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> Order Now</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button class="btn-buy" style="padding: 20px; font-size: 16px; background: var(--primary);" onclick="checkout()">ORDER ON WHATSAPP</button>
-        <p onclick="closePanel('cart-panel')" style="text-align: center; margin-top: 25px; color: var(--text-muted); cursor: pointer;">← Continue Shopping</p>
     </div>
 
-    <nav class="navbar">
-        <div class="nav-link active" onclick="location.reload()"><span>🏠</span>Home</div>
-        <div class="nav-link" onclick="openPanel('user-panel')"><span>📍</span>Address</div>
-        <div class="nav-link" onclick="openCart()"><span>🛍️</span>Cart</div>
+    <div id="sellPage" class="page">
+        <div class="container">
+            <div id="sellLocked" style="text-align: center; background: var(--card); padding: 40px 20px; border-radius: 30px;">
+                <i class="fa-solid fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h2>Login Required</h2>
+                <p style="color:var(--sub); margin: 15px 0;">Please login with Google to post ads.</p>
+                <button onclick="showAuth()" style="background:var(--primary); color:white; border:none; padding:15px 30px; border-radius:15px; font-weight:800;">Login Now</button>
+            </div>
+
+            <div id="sellForm" style="display:none; background: var(--card); padding: 25px; border-radius: 30px;">
+                <h2 style="margin-bottom: 20px;">Post New Ad</h2>
+                <input type="text" id="pName" class="form-input" placeholder="Product Name">
+                <input type="number" id="pPrice" class="form-input" placeholder="Price (PKR)">
+                <input type="text" id="pImg" class="form-input" placeholder="Image Link (URL)">
+                <button onclick="postAd()" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:800; cursor:pointer;">Publish Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profilePage" class="page">
+        <div class="container" style="text-align: center;">
+            <div style="background: var(--card); padding: 40px 20px; border-radius: 30px;">
+                <img id="pPic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100px; height:100px; border-radius:50%; border:4px solid var(--primary); margin-bottom:15px;">
+                <h2 id="userName">Guest User</h2>
+                <p id="userEmail" style="color:var(--sub); margin-bottom:30px;">Log in to unlock all features</p>
+                <button id="authBtn" onclick="showAuth()" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:800;">Login / Upgrade</button>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-link active" onclick="go('homePage', this)"><i class="fa-solid fa-house"></i></div>
+        <div class="nav-link" onclick="go('sellPage', this)"><i class="fa-solid fa-circle-plus"></i></div>
+        <div class="nav-link" onclick="go('profilePage', this)"><i class="fa-solid fa-circle-user"></i></div>
     </nav>
 
     <script>
-        const WHATSAPP_NUM = "923252078703";
-        let cart = [];
-        
-        const products = [
-            { id: 1, cat: 'shirt', name: 'Elite Linen Shirt (Slim Fit)', price: 2800, img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400', tag: 'Trending' },
-            { id: 2, cat: 'watch', name: 'Black Stealth Midnight', price: 12500, img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400', tag: 'Limited' },
-            { id: 3, cat: 'shirt', name: 'Classic Pure White Tee', price: 1500, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', tag: 'Essential' },
-            { id: 4, cat: 'watch', name: 'Golden Chrono Edition', price: 15000, img: 'https://images.unsplash.com/photo-1524592093035-236b5744a544?w=400', tag: 'Luxury' }
-        ];
+        // --- Firebase Config (Put your real config here) ---
+        const firebaseConfig = { apiKey: "AIza...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-        function render(items) {
-            const grid = document.getElementById('main-grid');
-            if(items.length === 0) {
-                grid.innerHTML = `<div class="empty-state">No items found.</div>`;
-                return;
+        // Check Auth State
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                updateUI(user);
+            } else {
+                if (localStorage.getItem('guestMode') !== 'true') {
+                    showAuth();
+                }
             }
-            grid.innerHTML = items.map(p => `
-                <div class="card">
-                    <div class="img-box">
-                        <div class="badge">${p.tag}</div>
-                        <img src="${p.img}" loading="lazy">
-                    </div>
-                    <div class="card-info">
-                        <h3>${p.name}</h3>
-                        <div class="price">Rs. ${p.price.toLocaleString()}</div>
-                        <button class="btn-buy" onclick="addToCart(${p.id})">ADD TO BAG</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+        });
 
-        function addToCart(id) {
-            const item = products.find(p => p.id === id);
-            cart.push(item);
-            updateCartUI();
-            // Simple animation
-            document.getElementById('cart-dot').style.transform = "scale(1.5)";
-            setTimeout(() => document.getElementById('cart-dot').style.transform = "scale(1)", 200);
-        }
-
-        function updateCartUI() {
-            document.getElementById('cart-dot').innerText = cart.length;
-            const list = document.getElementById('cart-items-list');
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            
-            list.innerHTML = cart.map((item, index) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--glass); padding: 10px; border-radius: 12px;">
-                    <div>
-                        <div style="font-size: 14px;">${item.name}</div>
-                        <div style="color: var(--primary); font-weight: 800;">Rs. ${item.price}</div>
-                    </div>
-                    <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ff4444; font-size:18px;">✕</button>
-                </div>
-            `).join('');
-            
-            document.getElementById('cart-total').innerText = `Rs. ${total.toLocaleString()}`;
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
-        function openPanel(id) { document.getElementById(id).classList.add('active'); }
-        function closePanel(id) { document.getElementById(id).classList.remove('active'); }
-        function openCart() { openPanel('cart-panel'); }
-
-        function searchItems(query) {
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
-            render(filtered);
-        }
-
-        function filterItems(c, btn) {
-            document.querySelectorAll('.pills').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            render(c === 'all' ? products : products.filter(i => i.cat === c));
-        }
-
-        function saveUser() {
-            const data = {
-                n: document.getElementById('u-name').value,
-                a: document.getElementById('u-address').value,
-                p: document.getElementById('u-phone').value
-            };
-            if(!data.n || !data.a) return alert("Please enter name and address!");
-            localStorage.setItem('mk_elite_profile', JSON.stringify(data));
-            closePanel('user-panel');
-            alert("Profile Saved! ✅");
-        }
-
-        function checkout() {
-            const user = JSON.parse(localStorage.getItem('mk_elite_profile'));
-            if(!user) return alert("Please save your address first!"), openPanel('user-panel');
-            if(cart.length === 0) return alert("Bag is empty!");
-
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            const itemsList = cart.map(i => `- ${i.name} (Rs. ${i.price})`).join('\n');
-            
-            const msg = `*NEW ORDER - MK ELITE*\n\n` +
-                      `👤 *Name:* ${user.n}\n` +
-                      `📍 *Address:* ${user.a}\n` +
-                      `📞 *Phone:* ${user.p}\n\n` +
-                      `*ITEMS:*\n${itemsList}\n\n` +
-                      `*TOTAL BILL: Rs. ${total}*`;
-            
-            window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        window.onload = () => {
-            render(products);
-            const saved = JSON.parse(localStorage.getItem('mk_elite_profile'));
-            if(saved) {
-                document.getElementById('u-name').value = saved.n;
-                document.getElementById('u-address').value = saved.a;
-                document.getElementById('u-phone').value = saved.p;
+        function updateUI(user) {
+            document.getElementById('authModal').style.display = 'none';
+            if (user) {
+                document.getElementById('userName').innerText = user.displayName;
+                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('pPic').src = user.photoURL;
+                document.getElementById('headPic').src = user.photoURL;
+                document.getElementById('sellLocked').style.display = 'none';
+                document.getElementById('sellForm').style.display = 'block';
+                document.getElementById('authBtn').innerText = "Logout";
+                document.getElementById('authBtn').style.background = "#fee2e2";
+                document.getElementById('authBtn').style.color = "#ef4444";
+                document.getElementById('authBtn').onclick = logout;
             }
-        };
+        }
+
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then(res => {
+                localStorage.setItem('guestMode', 'false');
+                updateUI(res.user);
+            }).catch(e => alert(e.message));
+        }
+
+        function continueAsGuest() {
+            localStorage.setItem('guestMode', 'true');
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function showAuth() { 
+            document.getElementById('authModal').style.display = 'flex'; 
+        }
+
+        function logout() {
+            auth.signOut();
+            localStorage.removeItem('guestMode');
+            location.reload();
+        }
+
+        function go(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function postAd() {
+            const n = document.getElementById('pName').value;
+            const p = document.getElementById('pPrice').value;
+            const i = document.getElementById('pImg').value;
+            if(!n || !p || !i) return alert("Fill all fields");
+
+            const card = document.createElement('div');
+            card.className = 'card ad-item';
+            card.innerHTML = `<img src="${i}"><div class="card-body"><div class="price">Rs. ${p}</div><div class="title">${n}</div><a href="https://wa.me/923000000000" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> Order Now</a></div>`;
+            document.getElementById('adGrid').prepend(card);
+            alert("Ad Posted!");
+            go('homePage', document.querySelectorAll('.nav-link')[0]);
+        }
+
+        function search() {
+            let q = document.getElementById('searchInput').value.toLowerCase();
+            let items = document.getElementsByClassName('ad-item');
+            for(let i of items) {
+                let t = i.querySelector('.title').innerText.toLowerCase();
+                i.style.display = t.includes(q) ? "block" : "none";
+            }
+        }
     </script>
 </body>
 </html>
+ 
