@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK ELITE | PREMIUM SHOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #00ffd5; 
+            --bg: #0b0b0f; 
+            --card: #1a1a24; 
+            --accent: #ff007a; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background: var(--bg); color: #fff; padding-bottom: 120px; overflow-x: hidden; }
+
+        header { 
+            padding: 20px 6%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(11, 11, 15, 0.8); 
+            backdrop-filter: blur(20px); 
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--glass);
+        }
+        .logo { font-weight: 800; font-size: 22px; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Search Bar */
+        .search-container { padding: 15px 6%; }
+        .search-bar {
+            width: 100%; padding: 15px 20px; border-radius: 15px;
+            background: var(--card); border: 1px solid var(--glass);
+            color: white; outline: none; transition: 0.3s;
+        }
+        .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,255,213,0.1); }
+
+        .scroller { display: flex; gap: 12px; padding: 10px 6%; overflow-x: auto; scrollbar-width: none; }
+        .pills { 
+            background: var(--card); border: 1px solid var(--glass); padding: 10px 22px; 
+            border-radius: 12px; color: #fff; cursor: pointer; white-space: nowrap; 
+            transition: 0.3s; font-size: 13px;
+        }
+        .pills.active { background: var(--primary); color: #000; font-weight: 700; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 6%; }
+        
+        /* Premium Card Design */
+        .card { 
+            background: var(--card); border-radius: 20px; overflow: hidden; 
+            border: 1px solid var(--glass); position: relative;
+            transition: transform 0.3s;
+        }
+        .card:active { transform: scale(0.95); }
+        
+        .img-box { width: 100%; height: 160px; position: relative; background: #222; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .badge {
+            position: absolute; top: 10px; left: 10px; background: var(--accent);
+            padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800;
+        }
+
+        .card-info { padding: 15px; }
+        .card-info h3 { font-size: 14px; margin-bottom: 5px; color: #fff; height: 35px; overflow: hidden; }
+        .price { color: var(--primary); font-weight: 800; font-size: 16px; margin-bottom: 12px; }
+        
+        .btn-buy { 
+            width: 100%; padding: 12px; border-radius: 12px; border: none; 
+            background: #fff; color: #000; font-weight: 800; font-size: 11px; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-buy:hover { background: var(--primary); }
+
+        /* Floating Cart Button */
+        .cart-count {
+            position: absolute; top: -5px; right: -5px; background: var(--accent);
+            width: 18px; height: 18px; border-radius: 50%; font-size: 10px;
+            display: flex; align-items: center; justify-content: center; font-weight: 800;
+        }
+
+        .panel {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            padding: 40px 8%; overflow-y: auto;
+        }
+        .panel.active { right: 0; }
+        
+        .input-field { 
+            width: 100%; padding: 18px; background: #222; border: 1px solid var(--glass);
+            border-radius: 18px; color: white; margin-bottom: 15px; outline: none;
+        }
+
+        .navbar { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 90%; height: 70px; background: rgba(26, 26, 36, 0.9);
+            backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass);
+            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+        }
+        .nav-link { color: #666; text-decoration: none; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-link.active { color: var(--primary); }
+
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">MK <span>ELITE</span></div>
+        <div style="position: relative; cursor: pointer;" onclick="openCart()">
+            <span style="font-size: 24px;">🛍️</span>
+            <div class="cart-count" id="cart-dot">0</div>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search premium items..." onkeyup="searchItems(this.value)">
+    </div>
+
+    <div class="scroller">
+        <div class="pills active" onclick="filterItems('all', this)">All Items</div>
+        <div class="pills" onclick="filterItems('shirt', this)">Premium Shirts</div>
+        <div class="pills" onclick="filterItems('watch', this)">Luxury Watches</div>
+    </div>
+
+    <div class="grid" id="main-grid"></div>
+
+    <div class="panel" id="user-panel">
+        <h1 style="margin-bottom: 10px;">Your Profile 👤</h1>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Address for faster checkout.</p>
+        <input type="text" id="u-name" class="input-field" placeholder="Full Name">
+        <textarea id="u-address" class="input-field" rows="4" placeholder="Full Address"></textarea>
+        <input type="number" id="u-phone" class="input-field" placeholder="WhatsApp Number">
+        <button class="btn-buy" style="padding: 20px; font-size: 16px;" onclick="saveUser()">SAVE PROFILE</button>
+        <p onclick="closePanel('user-panel')" style="text-align: center; margin-top: 25px; color: var(--text-muted); cursor: pointer;">← Close</p>
+    </div>
+
+    <div class="panel" id="cart-panel">
+        <h1 style="margin-bottom: 20px;">Your Bag 🛍️</h1>
+        <div id="cart-items-list"></div>
+        <hr style="border: 0; border-top: 1px solid var(--glass); margin: 20px 0;">
+        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; margin-bottom: 20px;">
+            <span>Total:</span>
+            <span id="cart-total">Rs. 0</span>
+        </div>
+        <button class="btn-buy" style="padding: 20px; font-size: 16px; background: var(--primary);" onclick="checkout()">ORDER ON WHATSAPP</button>
+        <p onclick="closePanel('cart-panel')" style="text-align: center; margin-top: 25px; color: var(--text-muted); cursor: pointer;">← Continue Shopping</p>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-link active" onclick="location.reload()"><span>🏠</span>Home</div>
+        <div class="nav-link" onclick="openPanel('user-panel')"><span>📍</span>Address</div>
+        <div class="nav-link" onclick="openCart()"><span>🛍️</span>Cart</div>
+    </nav>
+
+    <script>
+        const WHATSAPP_NUM = "923252078703";
+        let cart = [];
+        
+        const products = [
+            { id: 1, cat: 'shirt', name: 'Elite Linen Shirt (Slim Fit)', price: 2800, img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400', tag: 'Trending' },
+            { id: 2, cat: 'watch', name: 'Black Stealth Midnight', price: 12500, img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400', tag: 'Limited' },
+            { id: 3, cat: 'shirt', name: 'Classic Pure White Tee', price: 1500, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', tag: 'Essential' },
+            { id: 4, cat: 'watch', name: 'Golden Chrono Edition', price: 15000, img: 'https://images.unsplash.com/photo-1524592093035-236b5744a544?w=400', tag: 'Luxury' }
+        ];
+
+        function render(items) {
+            const grid = document.getElementById('main-grid');
+            if(items.length === 0) {
+                grid.innerHTML = `<div class="empty-state">No items found.</div>`;
+                return;
+            }
+            grid.innerHTML = items.map(p => `
+                <div class="card">
+                    <div class="img-box">
+                        <div class="badge">${p.tag}</div>
+                        <img src="${p.img}" loading="lazy">
+                    </div>
+                    <div class="card-info">
+                        <h3>${p.name}</h3>
+                        <div class="price">Rs. ${p.price.toLocaleString()}</div>
+                        <button class="btn-buy" onclick="addToCart(${p.id})">ADD TO BAG</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
+            // Simple animation
+            document.getElementById('cart-dot').style.transform = "scale(1.5)";
+            setTimeout(() => document.getElementById('cart-dot').style.transform = "scale(1)", 200);
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-dot').innerText = cart.length;
+            const list = document.getElementById('cart-items-list');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            list.innerHTML = cart.map((item, index) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--glass); padding: 10px; border-radius: 12px;">
+                    <div>
+                        <div style="font-size: 14px;">${item.name}</div>
+                        <div style="color: var(--primary); font-weight: 800;">Rs. ${item.price}</div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ff4444; font-size:18px;">✕</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('cart-total').innerText = `Rs. ${total.toLocaleString()}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function openPanel(id) { document.getElementById(id).classList.add('active'); }
+        function closePanel(id) { document.getElementById(id).classList.remove('active'); }
+        function openCart() { openPanel('cart-panel'); }
+
+        function searchItems(query) {
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+            render(filtered);
+        }
+
+        function filterItems(c, btn) {
+            document.querySelectorAll('.pills').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            render(c === 'all' ? products : products.filter(i => i.cat === c));
+        }
+
+        function saveUser() {
+            const data = {
+                n: document.getElementById('u-name').value,
+                a: document.getElementById('u-address').value,
+                p: document.getElementById('u-phone').value
+            };
+            if(!data.n || !data.a) return alert("Please enter name and address!");
+            localStorage.setItem('mk_elite_profile', JSON.stringify(data));
+            closePanel('user-panel');
+            alert("Profile Saved! ✅");
+        }
+
+        function checkout() {
+            const user = JSON.parse(localStorage.getItem('mk_elite_profile'));
+            if(!user) return alert("Please save your address first!"), openPanel('user-panel');
+            if(cart.length === 0) return alert("Bag is empty!");
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const itemsList = cart.map(i => `- ${i.name} (Rs. ${i.price})`).join('\n');
+            
+            const msg = `*NEW ORDER - MK ELITE*\n\n` +
+                      `👤 *Name:* ${user.n}\n` +
+                      `📍 *Address:* ${user.a}\n` +
+                      `📞 *Phone:* ${user.p}\n\n` +
+                      `*ITEMS:*\n${itemsList}\n\n` +
+                      `*TOTAL BILL: Rs. ${total}*`;
+            
+            window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        window.onload = () => {
+            render(products);
+            const saved = JSON.parse(localStorage.getItem('mk_elite_profile'));
+            if(saved) {
+                document.getElementById('u-name').value = saved.n;
+                document.getElementById('u-address').value = saved.a;
+                document.getElementById('u-phone').value = saved.p;
+            }
+        };
+    </script>
+</body>
+</html>
