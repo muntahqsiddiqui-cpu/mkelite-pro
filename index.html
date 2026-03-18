@@ -1,268 +1,233 @@
-                       <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MK ELITE | Pro Edition</title>
+    <title>MK ELITE | Premium Marketplace</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; 
-            --sub: #64748b; --accent: #eef2ff; --border: rgba(0,0,0,0.06);
-            --nav-bg: rgba(255, 255, 255, 0.8);
+            --primary: #cba052; /* Luxury Gold */
+            --secondary: #1a293f; /* Deep Navy */
+            --dark: #070c17; /* Near Black */
+            --glass: rgba(255, 255, 255, 0.03);
+            --blur: blur(20px);
+            --accent: #2ecc71; /* Green */
         }
 
-        body.dark-mode {
-            --bg: #020617; --card: #0f172a; --text: #f8fafc; --sub: #94a3b8;
-            --accent: #1e293b; --border: rgba(255,255,255,0.08);
-            --nav-bg: rgba(15, 23, 42, 0.8);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--dark); color: #fff; padding-bottom: 90px; min-height: 100vh; overflow-x: hidden; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
-
-        /* --- Auth Modal --- */
-        #authModal { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(15px); z-index: 3000; 
-            display: flex; align-items: center; justify-content: center; padding: 25px; 
-        }
-        .login-box { 
-            background: var(--card); padding: 40px 25px; border-radius: 40px; 
-            width: 100%; max-width: 400px; text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .btn-google { 
-            width: 100%; padding: 18px; background: white; border: 1px solid #ddd; 
-            border-radius: 20px; font-weight: 700; display: flex; 
-            align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: #000; 
-            margin-bottom: 15px; 
-        }
-        .btn-guest { 
-            width: 100%; padding: 15px; background: var(--accent); color: var(--primary); 
-            border: none; border-radius: 18px; font-weight: 700; cursor: pointer; 
-        }
-
-        /* --- Header --- */
+        /* --- Header (Luxury Glass) --- */
         header { 
-            padding: 15px 20px; background: var(--nav-bg); backdrop-filter: blur(10px); 
-            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; background: rgba(7, 12, 23, 0.85); backdrop-filter: var(--blur);
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid rgba(203, 160, 82, 0.15); /* Subtle Gold border */
+            position: sticky; top: 0; z-index: 1000;
         }
+        .logo { 
+            font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #cba052);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .status-badge { font-size: 11px; font-weight: 400; padding: 5px 12px; border-radius: 20px; background: rgba(203, 160, 82, 0.05); border: 1px solid rgba(203, 160, 82, 0.1); color: #cba052; }
 
-        /* --- Grid & Cards --- */
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* --- Input & Form (Minimalist Luxe) --- */
+        .search-area { padding: 15px 5%; }
+        .search-wrapper { background: var(--glass); border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .search-wrapper:focus-within { border-color: rgba(203, 160, 82, 0.3); background: rgba(255,255,255,0.01); }
+        .search-wrapper i { color: #64748b; margin-right: 12px; font-size: 16px; }
+        .search-wrapper input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 15px; font-weight: 300; }
+
+        /* --- Grid & Cards (Glassmorphism) --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 15px; padding: 10px 5%; }
         .card { 
-            background: var(--card); border-radius: 28px; overflow: hidden; 
-            border: 1px solid var(--border); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+            background: rgba(30, 41, 59, 0.2); 
+            backdrop-filter: blur(10px);
+            border-radius: 20px; overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.03); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            animation: slideUp 0.5s ease;
         }
-        .card img { width: 100%; height: 160px; object-fit: cover; }
-        .card-body { padding: 15px; }
-        .price { font-size: 18px; font-weight: 800; color: var(--primary); }
-        .title { font-size: 13px; color: var(--sub); font-weight: 600; margin: 5px 0 12px; height: 35px; overflow: hidden; }
-        .wa-btn { 
-            background: #22c55e; color: white; text-decoration: none; 
-            display: flex; align-items: center; justify-content: center; gap: 8px; 
-            padding: 12px; border-radius: 15px; font-size: 12px; font-weight: 700; 
+        .card:active { transform: scale(0.97); }
+        .card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .p-details { padding: 15px; }
+        .price { font-weight: 800; color: #fff; font-size: 1.2rem; letter-spacing: -0.5px; }
+        .name { font-size: 13px; color: #94a3b8; font-weight: 300; margin: 4px 0 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* --- Action Buttons (Clean & Luxe) --- */
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; transition: 0.2s; }
+        .btn-wa { background-color: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-wa:active { background-color: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.05); }
+        .btn-wa i { color: var(--accent); }
+
+        .btn-primary { 
+            background: linear-gradient(45deg, #cba052, #e5c98e); 
+            color: var(--dark); 
+            box-shadow: 0 4px 15px rgba(203, 160, 82, 0.2);
         }
 
-        /* --- Navigation --- */
+        /* --- Views --- */
+        .view { display: none; padding: 20px 5% 100px; animation: fadeIn 0.3s ease; }
+        .active-view { display: block; }
+
+        /* --- Login/Upload Area (Minimalist) --- */
+        .upload-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; color: #fff; letter-spacing: -0.5px; }
+        input, select, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: var(--glass); color: white; outline: none; font-weight: 300; }
+        input:focus { border-color: rgba(203, 160, 82, 0.3); }
+
+        /* --- Bottom Navigation (Glass Tab Bar) --- */
         nav { 
-            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); 
-            backdrop-filter: blur(10px); display: flex; height: 80px; 
-            border-top: 1px solid var(--border); z-index: 1000; 
+            position: fixed; bottom: 0; width: 100%; 
+            background: rgba(7, 12, 23, 0.8); 
+            backdrop-filter: var(--blur);
+            display: flex; justify-content: space-around; 
+            padding: 15px 0; 
+            border-top: 1px solid rgba(203, 160, 82, 0.1); 
+            z-index: 2000;
         }
-        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); gap: 5px; }
-        .nav-link.active { color: var(--primary); }
+        .nav-item { color: #64748b; text-align: center; font-size: 11px; cursor: pointer; flex: 1; transition: 0.2s; font-weight: 300; }
+        .nav-item.active { color: #cba052; font-weight: 600; }
+        .nav-item i { display: block; font-size: 22px; margin-bottom: 4px; opacity: 0.6; }
+        .nav-item.active i { opacity: 1; }
 
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Form Styling */
-        .form-input { 
-            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; 
-            border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;
-        }
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="dark-mode">
-
-    <div id="authModal">
-        <div class="login-box">
-            <h1 style="font-weight: 800; font-size: 32px; margin-bottom: 10px;">MK <span style="color:var(--primary)">ELITE</span></h1>
-            <p style="color: var(--sub); margin-bottom: 30px;">Premium Marketplace for Legends</p>
-            
-            <button onclick="loginWithGoogle()" class="btn-google">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22"> Sign in with Google
-            </button>
-            
-            <button onclick="continueAsGuest()" class="btn-guest">
-                Continue as Guest
-            </button>
-        </div>
-    </div>
+<body>
 
     <header>
-        <div style="font-size: 22px; font-weight: 800;">MK <span style="color:var(--primary)">ELITE</span></div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="document.body.classList.toggle('dark-mode')" style="background:var(--accent); border:none; padding:8px 12px; border-radius:10px; color:var(--text); cursor:pointer;">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <div id="userHeader" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <img id="headPic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%;">
-            </div>
-        </div>
+        <div class="logo">MK ELITE</div>
+        <div class="status-badge" id="uStatus">Guest Mode</div>
     </header>
 
-    <div id="homePage" class="page active">
-        <div class="container">
-            <div style="margin-bottom: 20px; position: relative;">
-                <input type="text" id="searchInput" placeholder="Search luxury..." onkeyup="search()" style="width:100%; padding:15px 15px 15px 45px; border-radius:20px; border:none; background:var(--card); color:var(--text); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:18px; top:18px; color:var(--sub);"></i>
-            </div>
-            <div class="grid" id="adGrid">
-                <div class="card ad-item">
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500">
-                    <div class="card-body">
-                        <div class="price">Rs. 8,500</div>
-                        <div class="title">Elite Silver Watch</div>
-                        <a href="https://wa.me/923000000000" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> Order Now</a>
-                    </div>
-                </div>
+    <main id="homeView" class="view active-view" style="padding:0;">
+        <div class="search-area">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="pSearch" placeholder="Search by name..." onkeyup="filterProducts()">
             </div>
         </div>
+        <div class="grid" id="pGrid"></div>
+    </main>
+
+    <div id="sellView" class="view">
+        <h2 class="upload-title">New Listing</h2>
+        <input type="text" id="n" placeholder="Product Name (e.g. Premium Cosmetic Case)">
+        <input type="number" id="p" placeholder="Price (PKR)">
+        <input type="text" id="w" placeholder="WhatsApp (03xx...)">
+        <input type="file" id="i" accept="image/*">
+        <button class="btn btn-primary" onclick="save()">Publish Now</button>
     </div>
 
-    <div id="sellPage" class="page">
-        <div class="container">
-            <div id="sellLocked" style="text-align: center; background: var(--card); padding: 40px 20px; border-radius: 30px;">
-                <i class="fa-solid fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
-                <h2>Login Required</h2>
-                <p style="color:var(--sub); margin: 15px 0;">Please login with Google to post ads.</p>
-                <button onclick="showAuth()" style="background:var(--primary); color:white; border:none; padding:15px 30px; border-radius:15px; font-weight:800;">Login Now</button>
-            </div>
-
-            <div id="sellForm" style="display:none; background: var(--card); padding: 25px; border-radius: 30px;">
-                <h2 style="margin-bottom: 20px;">Post New Ad</h2>
-                <input type="text" id="pName" class="form-input" placeholder="Product Name">
-                <input type="number" id="pPrice" class="form-input" placeholder="Price (PKR)">
-                <input type="text" id="pImg" class="form-input" placeholder="Image Link (URL)">
-                <button onclick="postAd()" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:800; cursor:pointer;">Publish Now</button>
-            </div>
+    <div id="profileView" class="view">
+        <div id="loginArea" style="text-align:center; padding-top:40px;">
+            <i class="fas fa-lock" style="font-size:50px; color:#cba052; margin-bottom:20px; opacity:0.8;"></i>
+            <h2 style="font-weight:800; margin-bottom:10px;">Login</h2>
+            <input type="email" id="em" placeholder="Seller Email">
+            <input type="password" id="pw" placeholder="Password">
+            <button class="btn btn-primary" onclick="login()">Access Dashboard</button>
         </div>
-    </div>
-
-    <div id="profilePage" class="page">
-        <div class="container" style="text-align: center;">
-            <div style="background: var(--card); padding: 40px 20px; border-radius: 30px;">
-                <img id="pPic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100px; height:100px; border-radius:50%; border:4px solid var(--primary); margin-bottom:15px;">
-                <h2 id="userName">Guest User</h2>
-                <p id="userEmail" style="color:var(--sub); margin-bottom:30px;">Log in to unlock all features</p>
-                <button id="authBtn" onclick="showAuth()" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:800;">Login / Upgrade</button>
+        <div id="userDash" style="display:none; text-align:center;">
+            <div style="width:70px; height:70px; background: rgba(203, 160, 82, 0.1); border-radius:50%; margin: 0 auto 15px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(203, 160, 82, 0.2);">
+                <i class="fas fa-user" style="color:#cba052; font-size:25px;"></i>
             </div>
+            <h3 id="uName" style="font-weight:800;">User</h3>
+            <p style="color:var(--accent); font-size:12px; font-weight:600; margin-bottom:30px;">Verified Seller</p>
+            <button class="btn" style="background:rgba(239, 68, 68, 0.1); color:#ff4757; border: 1px solid rgba(239, 68, 68, 0.2);" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <nav>
-        <div class="nav-link active" onclick="go('homePage', this)"><i class="fa-solid fa-house"></i></div>
-        <div class="nav-link" onclick="go('sellPage', this)"><i class="fa-solid fa-circle-plus"></i></div>
-        <div class="nav-link" onclick="go('profilePage', this)"><i class="fa-solid fa-circle-user"></i></div>
+        <div class="nav-item active" id="btnH" onclick="nav('home')"><i class="fas fa-house"></i><span>Home</span></div>
+        <div class="nav-item" id="btnS" onclick="nav('sell')" style="display:none;"><i class="fas fa-plus-circle"></i><span>Sell</span></div>
+        <div class="nav-item" id="btnP" onclick="nav('profile')"><i class="fas fa-user-circle"></i><span>Profile</span></div>
     </nav>
 
     <script>
-        // --- Firebase Config (Put your real config here) ---
-        const firebaseConfig = { apiKey: "AIza...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        let products = JSON.parse(localStorage.getItem('mk_premium_db')) || [];
+        let user = localStorage.getItem('mk_premium_user');
 
-        // Check Auth State
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                updateUI(user);
-            } else {
-                if (localStorage.getItem('guestMode') !== 'true') {
-                    showAuth();
-                }
-            }
-        });
+        window.onload = () => {
+            if(user) showUI(user);
+            render();
+        };
 
-        function updateUI(user) {
-            document.getElementById('authModal').style.display = 'none';
-            if (user) {
-                document.getElementById('userName').innerText = user.displayName;
-                document.getElementById('userEmail').innerText = user.email;
-                document.getElementById('pPic').src = user.photoURL;
-                document.getElementById('headPic').src = user.photoURL;
-                document.getElementById('sellLocked').style.display = 'none';
-                document.getElementById('sellForm').style.display = 'block';
-                document.getElementById('authBtn').innerText = "Logout";
-                document.getElementById('authBtn').style.background = "#fee2e2";
-                document.getElementById('authBtn').style.color = "#ef4444";
-                document.getElementById('authBtn').onclick = logout;
-            }
+        function nav(v) {
+            document.querySelectorAll('.view').forEach(x => x.classList.remove('active-view'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById(v+'View').classList.add('active-view');
+            document.getElementById('btn'+v.charAt(0).toUpperCase()+v.slice(1)).classList.add('active');
         }
 
-        function loginWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).then(res => {
-                localStorage.setItem('guestMode', 'false');
-                updateUI(res.user);
-            }).catch(e => alert(e.message));
+        function login() {
+            const e = document.getElementById('em').value;
+            const p = document.getElementById('pw').value;
+            if(e && p.length >= 6) { 
+                localStorage.setItem('mk_premium_user', e); 
+                location.reload(); 
+            } else { alert("Correct email & password are required."); }
         }
 
-        function continueAsGuest() {
-            localStorage.setItem('guestMode', 'true');
-            document.getElementById('authModal').style.display = 'none';
+        function showUI(email) {
+            document.getElementById('loginArea').style.display = 'none';
+            document.getElementById('userDash').style.display = 'block';
+            document.getElementById('uName').innerText = email.split('@')[0];
+            document.getElementById('btnS').style.display = 'block';
+            document.getElementById('uStatus').innerText = "Seller Mode";
         }
 
-        function showAuth() { 
-            document.getElementById('authModal').style.display = 'flex'; 
+        function logout() { localStorage.removeItem('mk_premium_user'); location.reload(); }
+
+        function save() {
+            const n=document.getElementById('n').value, p=document.getElementById('p').value, 
+                  w=document.getElementById('w').value, f=document.getElementById('i').files[0];
+            if(!n || !p || !f || !w) return alert("Fill all details!");
+            
+            const r = new FileReader();
+            r.onload = (e) => {
+                products.unshift({n, p, w, src: e.target.result, id: Date.now()});
+                localStorage.setItem('mk_premium_db', JSON.stringify(products));
+                render();
+                nav('home');
+            };
+            r.readAsDataURL(f);
         }
 
-        function logout() {
-            auth.signOut();
-            localStorage.removeItem('guestMode');
-            location.reload();
+        function filterProducts() {
+            const s = document.getElementById('pSearch').value.toLowerCase();
+            const filtered = products.filter(x => x.n.toLowerCase().includes(s));
+            render(filtered);
         }
 
-        function go(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-        }
+        function render(data = products) {
+            const g = document.getElementById('pGrid');
+            if(data.length === 0) { g.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:50px;opacity:0.5; font-weight:300; font-size:13px;">No exquisite pieces yet.</p>'; return; }
+            g.innerHTML = data.map((x, index) => {
+                // Formatting WhatsApp numbers for Karachi market
+                let cleanNumber = x.w.replace(/\D/g,'');
+                if(cleanNumber.startsWith('0')) { cleanNumber = '92' + cleanNumber.substring(1); }
+                if(!cleanNumber.startsWith('92')) { cleanNumber = '92' + cleanNumber; }
 
-        function postAd() {
-            const n = document.getElementById('pName').value;
-            const p = document.getElementById('pPrice').value;
-            const i = document.getElementById('pImg').value;
-            if(!n || !p || !i) return alert("Fill all fields");
-
-            const card = document.createElement('div');
-            card.className = 'card ad-item';
-            card.innerHTML = `<img src="${i}"><div class="card-body"><div class="price">Rs. ${p}</div><div class="title">${n}</div><a href="https://wa.me/923000000000" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> Order Now</a></div>`;
-            document.getElementById('adGrid').prepend(card);
-            alert("Ad Posted!");
-            go('homePage', document.querySelectorAll('.nav-link')[0]);
-        }
-
-        function search() {
-            let q = document.getElementById('searchInput').value.toLowerCase();
-            let items = document.getElementsByClassName('ad-item');
-            for(let i of items) {
-                let t = i.querySelector('.title').innerText.toLowerCase();
-                i.style.display = t.includes(q) ? "block" : "none";
-            }
+                return `
+                <div class="card" style="animation-delay: ${index * 0.1}s;">
+                    <img src="${x.src}" loading="lazy">
+                    <div class="p-details">
+                        <div class="price">Rs. ${parseFloat(x.p).toLocaleString()}</div>
+                        <span class="name">${x.n}</span>
+                        <a href="https://wa.me/${cleanNumber}?text=Hi, I saw '${x.n}' on MK Elite. Is it available?" target="_blank" class="btn btn-wa">
+                            <i class="fab fa-whatsapp"></i> Chat Now
+                        </a>
+                    </div>
+                </div>
+            `}).join('');
         }
     </script>
 </body>
 </html>
- 
