@@ -1,233 +1,140 @@
-<!DOCTYPE html>
+               <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MK ELITE | Premium Marketplace</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>MK ELITE | Premium Store</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
 
     <style>
-        :root {
-            --primary: #cba052; /* Luxury Gold */
-            --secondary: #1a293f; /* Deep Navy */
-            --dark: #070c17; /* Near Black */
-            --glass: rgba(255, 255, 255, 0.03);
-            --blur: blur(20px);
-            --accent: #2ecc71; /* Green */
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--dark); color: #fff; padding-bottom: 90px; min-height: 100vh; overflow-x: hidden; }
-
-        /* --- Header (Luxury Glass) --- */
-        header { 
-            padding: 20px 5%; background: rgba(7, 12, 23, 0.85); backdrop-filter: var(--blur);
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid rgba(203, 160, 82, 0.15); /* Subtle Gold border */
-            position: sticky; top: 0; z-index: 1000;
-        }
-        .logo { 
-            font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;
-            background: linear-gradient(to right, #fff, #cba052);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .status-badge { font-size: 11px; font-weight: 400; padding: 5px 12px; border-radius: 20px; background: rgba(203, 160, 82, 0.05); border: 1px solid rgba(203, 160, 82, 0.1); color: #cba052; }
-
-        /* --- Input & Form (Minimalist Luxe) --- */
-        .search-area { padding: 15px 5%; }
-        .search-wrapper { background: var(--glass); border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-        .search-wrapper:focus-within { border-color: rgba(203, 160, 82, 0.3); background: rgba(255,255,255,0.01); }
-        .search-wrapper i { color: #64748b; margin-right: 12px; font-size: 16px; }
-        .search-wrapper input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 15px; font-weight: 300; }
-
-        /* --- Grid & Cards (Glassmorphism) --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 15px; padding: 10px 5%; }
-        .card { 
-            background: rgba(30, 41, 59, 0.2); 
-            backdrop-filter: blur(10px);
-            border-radius: 20px; overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.03); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            animation: slideUp 0.5s ease;
-        }
-        .card:active { transform: scale(0.97); }
-        .card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .p-details { padding: 15px; }
-        .price { font-weight: 800; color: #fff; font-size: 1.2rem; letter-spacing: -0.5px; }
-        .name { font-size: 13px; color: #94a3b8; font-weight: 300; margin: 4px 0 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        /* --- Action Buttons (Clean & Luxe) --- */
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; transition: 0.2s; }
-        .btn-wa { background-color: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-wa:active { background-color: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.05); }
-        .btn-wa i { color: var(--accent); }
-
-        .btn-primary { 
-            background: linear-gradient(45deg, #cba052, #e5c98e); 
-            color: var(--dark); 
-            box-shadow: 0 4px 15px rgba(203, 160, 82, 0.2);
-        }
-
-        /* --- Views --- */
-        .view { display: none; padding: 20px 5% 100px; animation: fadeIn 0.3s ease; }
+        :root { --primary: #cba052; --dark: #070c17; --glass: rgba(255, 255, 255, 0.03); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--dark); color: #fff; padding-bottom: 100px; }
+        header { padding: 20px 5%; background: rgba(7, 12, 23, 0.9); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(203, 160, 82, 0.2); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: 800; background: linear-gradient(to right, #fff, #cba052); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px 5%; }
+        .card { background: rgba(30, 41, 59, 0.2); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
+        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .p-details { padding: 12px; }
+        .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; text-align: center; display: block; text-decoration: none; }
+        .btn-wa { background: #25d366; color: white; margin-top: 10px; }
+        .btn-primary { background: var(--primary); color: #000; margin-top: 10px; }
+        .view { display: none; padding: 20px 5%; }
         .active-view { display: block; }
-
-        /* --- Login/Upload Area (Minimalist) --- */
-        .upload-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; color: #fff; letter-spacing: -0.5px; }
-        input, select, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: var(--glass); color: white; outline: none; font-weight: 300; }
-        input:focus { border-color: rgba(203, 160, 82, 0.3); }
-
-        /* --- Bottom Navigation (Glass Tab Bar) --- */
-        nav { 
-            position: fixed; bottom: 0; width: 100%; 
-            background: rgba(7, 12, 23, 0.8); 
-            backdrop-filter: var(--blur);
-            display: flex; justify-content: space-around; 
-            padding: 15px 0; 
-            border-top: 1px solid rgba(203, 160, 82, 0.1); 
-            z-index: 2000;
-        }
-        .nav-item { color: #64748b; text-align: center; font-size: 11px; cursor: pointer; flex: 1; transition: 0.2s; font-weight: 300; }
-        .nav-item.active { color: #cba052; font-weight: 600; }
-        .nav-item i { display: block; font-size: 22px; margin-bottom: 4px; opacity: 0.6; }
-        .nav-item.active i { opacity: 1; }
-
-        /* --- Animations --- */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; background: var(--glass); border: 1px solid rgba(255,255,255,0.05); color: #fff; outline: none; }
+        nav { position: fixed; bottom: 12px; left: 5%; width: 90%; background: #0f172a; border-radius: 20px; display: flex; justify-content: space-around; padding: 12px 0; border: 1px solid rgba(203, 160, 82, 0.2); }
+        .nav-item { color: #64748b; font-size: 10px; text-align: center; flex: 1; }
+        .nav-item.active { color: #cba052; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">MK ELITE</div>
-        <div class="status-badge" id="uStatus">Guest Mode</div>
+        <div id="uStatus" style="font-size: 11px; color: var(--primary);">Loading...</div>
     </header>
 
-    <main id="homeView" class="view active-view" style="padding:0;">
-        <div class="search-area">
-            <div class="search-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" id="pSearch" placeholder="Search by name..." onkeyup="filterProducts()">
-            </div>
-        </div>
+    <div id="homeView" class="view active-view">
         <div class="grid" id="pGrid"></div>
-    </main>
-
-    <div id="sellView" class="view">
-        <h2 class="upload-title">New Listing</h2>
-        <input type="text" id="n" placeholder="Product Name (e.g. Premium Cosmetic Case)">
-        <input type="number" id="p" placeholder="Price (PKR)">
-        <input type="text" id="w" placeholder="WhatsApp (03xx...)">
-        <input type="file" id="i" accept="image/*">
-        <button class="btn btn-primary" onclick="save()">Publish Now</button>
     </div>
 
-    <div id="profileView" class="view">
-        <div id="loginArea" style="text-align:center; padding-top:40px;">
-            <i class="fas fa-lock" style="font-size:50px; color:#cba052; margin-bottom:20px; opacity:0.8;"></i>
-            <h2 style="font-weight:800; margin-bottom:10px;">Login</h2>
-            <input type="email" id="em" placeholder="Seller Email">
-            <input type="password" id="pw" placeholder="Password">
-            <button class="btn btn-primary" onclick="login()">Access Dashboard</button>
+    <div id="sellView" class="view">
+        <h2>Post New Product</h2>
+        <input type="text" id="n" placeholder="Name">
+        <input type="number" id="p" placeholder="Price">
+        <input type="text" id="w" placeholder="WhatsApp (923...)">
+        <input type="file" id="i" accept="image/*">
+        <button class="btn btn-primary" onclick="upload()">Publish</button>
+    </div>
+
+    <div id="profileView" class="view" style="text-align: center;">
+        <div id="loginArea">
+            <div style="font-size: 50px;">🔐</div>
+            <button class="btn btn-primary" onclick="login()">Login with Google</button>
         </div>
-        <div id="userDash" style="display:none; text-align:center;">
-            <div style="width:70px; height:70px; background: rgba(203, 160, 82, 0.1); border-radius:50%; margin: 0 auto 15px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(203, 160, 82, 0.2);">
-                <i class="fas fa-user" style="color:#cba052; font-size:25px;"></i>
-            </div>
-            <h3 id="uName" style="font-weight:800;">User</h3>
-            <p style="color:var(--accent); font-size:12px; font-weight:600; margin-bottom:30px;">Verified Seller</p>
-            <button class="btn" style="background:rgba(239, 68, 68, 0.1); color:#ff4757; border: 1px solid rgba(239, 68, 68, 0.2);" onclick="logout()">Logout</button>
+        <div id="userDash" style="display:none;">
+            <h3 id="uName">User</h3>
+            <button class="btn" style="color: #ff4757;" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <nav>
-        <div class="nav-item active" id="btnH" onclick="nav('home')"><i class="fas fa-house"></i><span>Home</span></div>
-        <div class="nav-item" id="btnS" onclick="nav('sell')" style="display:none;"><i class="fas fa-plus-circle"></i><span>Sell</span></div>
-        <div class="nav-item" id="btnP" onclick="nav('profile')"><i class="fas fa-user-circle"></i><span>Profile</span></div>
+        <div class="nav-item active" onclick="nav('home')">🏠<br>Home</div>
+        <div class="nav-item" id="sellBtn" style="display:none;" onclick="nav('sell')">➕<br>Sell</div>
+        <div class="nav-item" onclick="nav('profile')">👤<br>Profile</div>
     </nav>
 
     <script>
-        let products = JSON.parse(localStorage.getItem('mk_premium_db')) || [];
-        let user = localStorage.getItem('mk_premium_user');
-
-        window.onload = () => {
-            if(user) showUI(user);
-            render();
+        // AAPKA FIREBASE CODE (VIDEO SE LIYA GAYA)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcjF4v7pyiLgC80KK9JipiXubQaaTHps",
+            authDomain: "mk-elite-store.firebaseapp.com",
+            projectId: "mk-elite-store",
+            storageBucket: "mk-elite-store.firebasestorage.app",
+            messagingSenderId: "243770418879",
+            appId: "1:243770418879:web:f728dea0d3289df4bbc80a",
+            databaseURL: "https://mk-elite-store-default-rtdb.firebaseio.com/" 
         };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('userDash').style.display = 'block';
+                document.getElementById('sellBtn').style.display = 'block';
+                document.getElementById('uName').innerText = user.displayName;
+                document.getElementById('uStatus').innerText = "Seller Mode";
+            } else {
+                document.getElementById('uStatus').innerText = "Guest Mode";
+            }
+        });
+
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider);
+        }
+
+        function logout() { auth.signOut().then(() => location.reload()); }
 
         function nav(v) {
             document.querySelectorAll('.view').forEach(x => x.classList.remove('active-view'));
-            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
             document.getElementById(v+'View').classList.add('active-view');
-            document.getElementById('btn'+v.charAt(0).toUpperCase()+v.slice(1)).classList.add('active');
         }
 
-        function login() {
-            const e = document.getElementById('em').value;
-            const p = document.getElementById('pw').value;
-            if(e && p.length >= 6) { 
-                localStorage.setItem('mk_premium_user', e); 
-                location.reload(); 
-            } else { alert("Correct email & password are required."); }
-        }
-
-        function showUI(email) {
-            document.getElementById('loginArea').style.display = 'none';
-            document.getElementById('userDash').style.display = 'block';
-            document.getElementById('uName').innerText = email.split('@')[0];
-            document.getElementById('btnS').style.display = 'block';
-            document.getElementById('uStatus').innerText = "Seller Mode";
-        }
-
-        function logout() { localStorage.removeItem('mk_premium_user'); location.reload(); }
-
-        function save() {
-            const n=document.getElementById('n').value, p=document.getElementById('p').value, 
-                  w=document.getElementById('w').value, f=document.getElementById('i').files[0];
-            if(!n || !p || !f || !w) return alert("Fill all details!");
-            
+        function upload() {
+            const n=document.getElementById('n').value, p=document.getElementById('p').value, w=document.getElementById('w').value, f=document.getElementById('i').files[0];
+            if(!n || !p || !f) return alert("Fill all!");
             const r = new FileReader();
             r.onload = (e) => {
-                products.unshift({n, p, w, src: e.target.result, id: Date.now()});
-                localStorage.setItem('mk_premium_db', JSON.stringify(products));
-                render();
-                nav('home');
+                db.ref('products').push({n, p, w, src: e.target.result});
+                alert("Live!"); nav('home');
             };
             r.readAsDataURL(f);
         }
 
-        function filterProducts() {
-            const s = document.getElementById('pSearch').value.toLowerCase();
-            const filtered = products.filter(x => x.n.toLowerCase().includes(s));
-            render(filtered);
-        }
-
-        function render(data = products) {
-            const g = document.getElementById('pGrid');
-            if(data.length === 0) { g.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:50px;opacity:0.5; font-weight:300; font-size:13px;">No exquisite pieces yet.</p>'; return; }
-            g.innerHTML = data.map((x, index) => {
-                // Formatting WhatsApp numbers for Karachi market
-                let cleanNumber = x.w.replace(/\D/g,'');
-                if(cleanNumber.startsWith('0')) { cleanNumber = '92' + cleanNumber.substring(1); }
-                if(!cleanNumber.startsWith('92')) { cleanNumber = '92' + cleanNumber; }
-
-                return `
-                <div class="card" style="animation-delay: ${index * 0.1}s;">
-                    <img src="${x.src}" loading="lazy">
+        db.ref('products').on('value', snap => {
+            const data = snap.val();
+            let html = '';
+            for(let id in data) {
+                let x = data[id];
+                html += `<div class="card">
+                    <img src="${x.src}">
                     <div class="p-details">
-                        <div class="price">Rs. ${parseFloat(x.p).toLocaleString()}</div>
-                        <span class="name">${x.n}</span>
-                        <a href="https://wa.me/${cleanNumber}?text=Hi, I saw '${x.n}' on MK Elite. Is it available?" target="_blank" class="btn btn-wa">
-                            <i class="fab fa-whatsapp"></i> Chat Now
-                        </a>
+                        <div class="price">Rs. ${x.p}</div>
+                        <div style="font-size:11px;color:#94a3b8">${x.n}</div>
+                        <a href="https://wa.me/${x.w}" class="btn btn-wa">WhatsApp</a>
                     </div>
-                </div>
-            `}).join('');
-        }
+                </div>`;
+            }
+            document.getElementById('pGrid').innerHTML = html;
+        });
     </script>
 </body>
 </html>
